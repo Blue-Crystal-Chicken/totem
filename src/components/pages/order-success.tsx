@@ -9,7 +9,7 @@ export default function OrderSuccess() {
     const location = useLocation();
     const navigate = useNavigate();
     const order = location.state?.order as OrderResponse;
-    const COUNTDOWN = 10;
+    const COUNTDOWN = 5;
 
     const [count, setCount] = useState(COUNTDOWN);
     
@@ -48,11 +48,6 @@ export default function OrderSuccess() {
 
             <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#F8FAFC]">
                 <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl shadow-blue-900/10 p-10 flex flex-col items-center text-center border border-[#EBF5FF]">
-                    
-                    {/* Success Icon */}
-                    <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mb-8 border-4 border-white shadow-lg">
-                        <span className="text-5xl animate-bounce">🍗</span>
-                    </div>
 
                     <h1 className="text-3xl font-black text-[#185FA5] mb-2">Grazie per il tuo ordine!</h1>
                     <p className="text-gray-500 font-medium mb-10">
@@ -80,7 +75,7 @@ export default function OrderSuccess() {
                                 </p>
                                 <Progress
                                     value={progress}
-                                    className="h-2 w-full bg-white/30 rounded-full overflow-hidden"
+                                    className="h-2 w-full bg-white rounded-full overflow-hidden"
                                 />
                             </div>
                         </div>

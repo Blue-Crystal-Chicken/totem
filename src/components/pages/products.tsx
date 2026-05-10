@@ -16,40 +16,25 @@ export default function Products() {
     const navigate = useNavigate();
     const [products, setProducts] = useState<ProductResponse[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [attempts, setAttempts] = useState(0);
-
-    const MAX_ATTEMPTS = 3;
 
     const { id } = useParams();
     const category_id = id ? parseInt(id) : null;
 
     useEffect(() => {
         const fetchProducts = async () => {
-            while (attempts < MAX_ATTEMPTS) {
             setLoading(true);
             try {
                 const response = await fetch(`${API_BASE_URL}/api/products/v1/category/id/${category_id}`);
                 const data = await response.json();
                 setProducts(data);
-                setError(null);
                 console.log("Fetched products:", data);
-                break; // Exit loop on success
             } catch (error) {
                 console.error("Error fetching products:", error);
-                setError("Errore nel caricamento dei prodotti. Riprovo...");
-                setAttempts(prev => prev + 1);
             } finally {
                 setLoading(false);
             }
-        }
     };
-        if(attempts < MAX_ATTEMPTS) {
-            fetchProducts();
-        } else {
-            setError("Errore nel caricamento dei prodotti. Riprova più tardi.");
-            navigate(`/error?message=${error}`);
-        }
+        fetchProducts();
     }, [category_id]);
 
     function handleBack() {

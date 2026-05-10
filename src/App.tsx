@@ -19,33 +19,21 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export function App() {
 
   const [category, setCategory] = useState<CategoryResponseWithTotalProducts[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [attempts, setAttempts] = useState(0);
-
-  const MAX_ATTEMPTS = 3;
 
   useEffect(() => {
     const fetchCategories = async () => {
-      while (attempts < MAX_ATTEMPTS) {
+
         try {
           const response = await fetch(`${API_BASE_URL}/api/categories/v1/categories/tot_product`);
           const data: CategoryResponseWithTotalProducts[] = await response.json();
           setCategory(data);
-          setError(null);
           console.log("Fetched categories:", data);
-          break;
         } catch (error) {
           console.error("Error fetching categories:", error);
-          setError("Errore nel caricamento delle categorie. Riprovo...");
-          setAttempts(prev => prev + 1);
         }
-      }
     }
-    if (attempts < MAX_ATTEMPTS) {
+    
       fetchCategories();
-    } else {
-      setError("Errore nel caricamento delle categorie. Riprova più tardi.");
-    }
   }, []);
 
   return (

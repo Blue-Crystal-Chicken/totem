@@ -16,9 +16,6 @@ export default function Checkout() {
     const { state, totalPrice, dispatch } = useCart();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const MAX_ATTEMPTS = 3;
 
     const paymentMethods = [
         { id: "cash", label: "Contanti alla cassa", icon: "💵", description: "Paga direttamente al bancone" },
@@ -29,9 +26,6 @@ export default function Checkout() {
 
     const handleConfirmOrder = async () => {
         setLoading(true);
-        let attempts = 0;
-
-        while (attempts < MAX_ATTEMPTS) {
             try {
                 const orderRequest: OrderRequest = {
                     userId: null,
@@ -72,21 +66,10 @@ export default function Checkout() {
 
                 // Naviga alla pagina di successo
                 navigate("/order-success", { state: { order: createdOrder } });
-                setError(null);
-                break;
 
             } catch (err) {
                 console.error("Error creating order:", err);
-                setError("Errore nell'invio dell'ordine. Riprovo...");
-                attempts++;
             }
-        }
-
-        if (attempts >= MAX_ATTEMPTS) {
-            setError("Errore nell'invio dell'ordine. Riprova più tardi.");
-            navigate(`/error?message=${error}`);
-        }
-
         setLoading(false);
     };
 

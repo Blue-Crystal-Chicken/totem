@@ -13,38 +13,22 @@ export default function TableSelection() {
     const [tableNum, setTableNum] = useState<number | null>(null);
     const [tables, setTables] = useState<number>(0);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [attempts, setAttempts] = useState(0);
-
-    const MAX_ATTEMPTS = 3;
 
     useEffect(() => {
         async function fetchTables() {
-            while (attempts < MAX_ATTEMPTS) {
-                setLoading(true);
             try {
                 const response = await fetch(`${BASE_URL}/api/locations/location/tables/${LOCATION_ID}`);
                 if (response.ok) {
                     const data = await response.json();
                     setTables(data);
-                    setError(null);
-                    break;
                 }
             } catch (error) {
                 console.error("Error fetching tables:", error);
-                setError("Errore nel caricamento dei tavoli. Riprovo...");
-                setAttempts(prev => prev + 1);
             } finally {
                 setLoading(false);
             }
-        }
     }
-    if (attempts < MAX_ATTEMPTS) {
-            fetchTables();
-        } else {
-            setError("Errore nel caricamento dei tavoli. Riprova più tardi.");
-            navigate(`/error?message=${error}`);
-        }
+    fetchTables();
 }, []);
 
     function handleSubmit() {

@@ -19,36 +19,21 @@ export default function Product() {
 
     const [product, setProduct] = useState<ProductResponse>();
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [attempts, setAttempts] = useState(0);
-
-    const MAX_ATTEMPTS = 3;
 
     useEffect(() => {
         const fetchProduct = async () => {
-            while (attempts < MAX_ATTEMPTS) {
                 setLoading(true);
                 try {
                     const response = await fetch(`${API_BASE_URL}/api/products/v1/products/${productId}`);
                     const data = await response.json();
                     setProduct(data);
-                    setError(null);
-                    break;
                 } catch (error) {
                     console.error("Error fetching product:", error);
-                    setError("Errore nel caricamento del prodotto. Riprovo...");
-                    setAttempts(prev => prev + 1);
                 } finally {
                     setLoading(false);
                 }
-            }
         }
-        if (attempts < MAX_ATTEMPTS) {
-            fetchProduct();
-        } else {
-            setError("Errore nel caricamento del prodotto. Riprova più tardi.");
-            navigate(`/error?message=${error}`);
-        }
+        fetchProduct();
     }, [productId]);
 
 
