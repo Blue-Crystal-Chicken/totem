@@ -15,7 +15,7 @@ export default function ModeSelection() {
     function handleSubmit() {
         if(serviceMode === "take_away") {
             dispatch({ type: "SET_MODE", payload: "takeaway" });
-            navigate("/menu");
+            navigate("/home");
         } else {
             dispatch({ type: "SET_MODE", payload: "dine-in" });
             navigate("/table-selection");

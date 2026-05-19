@@ -12,6 +12,12 @@ import Cart from "./components/pages/cart";
 import Checkout from "./components/pages/checkout";
 import OrderSuccess from "./components/pages/order-success";
 import Error from "./components/pages/error";
+import type { OfferResponse } from "./types/offer.types";
+import Offers from "./components/pages/offers";
+import Offer from "./components/pages/offer";
+import type { MenuResponse } from "./types/menu.types";
+import Menus from "./components/pages/menus";
+import MenuDetails from "./components/pages/menuDetails";
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -19,10 +25,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 export function App() {
 
   const [category, setCategory] = useState<CategoryResponseWithTotalProducts[]>([]);
+  const [offers, setOffers] = useState<OfferResponse[]>([]);
+  const [menus, setMenus] = useState<MenuResponse[]>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
-
         try {
           const response = await fetch(`${API_BASE_URL}/api/categories/v1/categories/tot_product`);
           const data: CategoryResponseWithTotalProducts[] = await response.json();
@@ -32,8 +39,30 @@ export function App() {
           console.error("Error fetching categories:", error);
         }
     }
-    
-      fetchCategories();
+    const fetchOffers = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/offers/v1/top?limit=3`);
+        const data: OfferResponse[] = await response.json();
+        setOffers(data);
+        console.log("Fetched offers:", data);
+      } catch (error) {
+        console.error("Error fetching offers:", error);
+      }
+    }
+
+    const fetchMenus = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/menus/v1/top?limit=3`);
+        const data: MenuResponse[] = await response.json();
+        setMenus(data);
+        console.log("Fetched menus:", data);
+      } catch (error) {
+        console.error("Error fetching menus:", error);
+      }
+    };
+    fetchCategories();
+    fetchOffers();
+    fetchMenus();
   }, []);
 
   return (
@@ -42,8 +71,12 @@ export function App() {
         <Route path="/" element={<Home />} />
         <Route path="/mode-selection" element={<ModeSelection />} />
         <Route path="/table-selection" element={<TableSelection />} />
-        <Route path="/menu" element={<Menu category={category} />} />
-        <Route path="/menu/:id" element={<Products />} />
+        <Route path="/home" element={<Menu category={category} offers={offers} menus={menus} />} />
+        <Route path="/category/:id" element={<Products />} />
+        <Route path="/offer" element={<Offers />} />
+        <Route path="/offer/:id" element={<Offer />} />
+        <Route path="/menu" element={<Menus />} />
+        <Route path="/menu/:id" element={<MenuDetails />} />
         <Route path="/product/:id" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />

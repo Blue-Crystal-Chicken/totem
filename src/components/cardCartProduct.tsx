@@ -5,11 +5,12 @@ interface CardCartProductProps {
     quantity: number;
     price: number;
     img?: string;
+    ingredientNames?: string[];
     onUpdateQuantity: (quantity: number) => void;
     onRemove: () => void;
 }
 
-export default function CardCartProduct({ name, quantity, price, img, onUpdateQuantity, onRemove }: CardCartProductProps) {
+export default function CardCartProduct({ name, quantity, price, img, ingredientNames, onUpdateQuantity, onRemove }: CardCartProductProps) {
     return (
         <div className="bg-white border border-[#EBF5FF] rounded-2xl shadow-sm p-4 hover:shadow-md transition-all">
             <div className="flex gap-4">
@@ -27,6 +28,11 @@ export default function CardCartProduct({ name, quantity, price, img, onUpdateQu
                     <div className="flex justify-between items-start">
                         <div>
                             <h3 className="text-lg font-bold text-[#185FA5] leading-tight">{name}</h3>
+                            {ingredientNames && ingredientNames.length > 0 && (
+                                <p className="text-xs text-gray-500 font-medium mt-0.5">
+                                    Extra: {ingredientNames.join(", ")}
+                                </p>
+                            )}
                             <p className="text-[#378ADD] font-semibold mt-1">€ {price.toFixed(2)}</p>
                         </div>
                         <button

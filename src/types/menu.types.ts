@@ -3,6 +3,7 @@ export interface MenuProductResponse {
   productName: string;
   quantity: number;
   obligatory: boolean;
+  productimgPath: string | null;
   unitPrice: number;
 }
 

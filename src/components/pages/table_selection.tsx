@@ -3,14 +3,16 @@ import { useEffect, useState } from "react";
 import Navbar from "../nav";
 import { Button } from "../ui/button";
 import { useCart } from "../context/cart";
+import { Delete, Check } from "lucide-react";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const LOCATION_ID = import.meta.env.VITE_API_LOCATION_ID;
 
 export default function TableSelection() {
+    const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "d", "0", "v"];
     const navigate = useNavigate();
     const { dispatch } = useCart();
-    const [tableNum, setTableNum] = useState<number | null>(null);
+    const [tableNum, setTableNum] = useState<string>("");
     const [tables, setTables] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
@@ -27,14 +29,26 @@ export default function TableSelection() {
             } finally {
                 setLoading(false);
             }
+        }
+        fetchTables();
+    }, []);
+
+    function handleKey(key: string) {
+        if (key === "d") {
+            setTableNum(prev => prev.slice(0, -1));
+        } else if (key === "v") {
+            handleSubmit();
+        } else {
+            if (tableNum.length < 3) {
+                setTableNum(prev => prev + key);
+            }
+        }
     }
-    fetchTables();
-}, []);
 
     function handleSubmit() {
         if (tableNum) {
             dispatch({ type: "SET_TABLE", payload: tableNum });
-            navigate("/menu");
+            navigate("/home");
         }
     }
 
@@ -46,76 +60,59 @@ export default function TableSelection() {
                 onBack={() => navigate("/mode-selection")}
             />
 
-            <div className="flex flex-col flex-1 px-3 py-3 gap-8 min-h-0">
+            <div className="flex flex-col flex-1 items-center justify-center px-6 gap-6">
 
-                {/* Indicatore tavolo selezionato */}
-                <div className={`transition-all duration-300 rounded-2xl p-4 text-center
-                    ${tableNum
-                        ? "bg-blue-50 border-2 border-blue-400 opacity-100 scale-100"
-                        : "bg-gray-100 border-2 border-dashed border-gray-300 opacity-60 scale-95"
-                    }`}
-                >
-                    {tableNum ? (
-                        <>
-                            <p className="text-sm text-blue-500 font-medium">Tavolo selezionato</p>
-                            <p className="text-4xl font-bold text-blue-700">{tableNum}</p>
-                        </>
-                    ) : (
-                        <p className="text-gray-400 font-medium">Nessun tavolo selezionato</p>
-                    )}
+                {/* Display numero tavolo */}
+                <div className="w-full max-w-xs flex flex-col items-center gap-1">
+                    <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
+                        Tavolo selezionato
+                    </span>
+                    <div className={`
+                        w-full flex items-center justify-center
+                        h-20 rounded-2xl border-2
+                        text-4xl font-bold tracking-widest
+                        transition-all duration-200
+                        ${tableNum
+                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            : "border-gray-200 bg-white text-gray-300"
+                        }
+                    `}>
+                        {tableNum || "—"}
+                    </div>
                 </div>
 
-                {/* Griglia tavoli */}
-                {loading ? (
-                    <div className="flex flex-1 items-center justify-center">
-                        <p className="text-gray-400 animate-pulse">Caricamento tavoli...</p>
-                    </div>
-                ) : tables === 0 ? (
-                    <div className="flex flex-1 items-center justify-center">
-                        <p className="text-gray-400">Nessun tavolo disponibile</p>
-                    </div>
-                ) : (
-                    <div className="flex-1 overflow-y-auto min-h-0 no-scrollbar">
-                        <div className={`grid grid-cols-5 gap-3 p-4`}>
-    {Array.from({ length: tables }).map((_, index) => {
-        const num = index + 1;
-        const isSelected = tableNum === num;
-        return (
-            <button
-                key={index}
-                onClick={() => setTableNum(isSelected ? null : num)}
-                className={`
-                    aspect-square rounded-xl font-bold text-sm
-                    transition-all duration-200 active:scale-95
-                    ${isSelected
-                        ? "bg-blue-600 text-white shadow-md shadow-blue-200 scale-105"
-                        : "bg-white text-blue-700 border-2 border-blue-200 hover:border-blue-400 hover:bg-blue-50"
-                    }
-                `}
-            >
-                {num}
-            </button>
-        );
-    })}
-</div>
-                    </div>
-                )}
+                {/* Tastierino numerico */}
+                <div className="grid grid-cols-3 gap-3 w-full max-w-xs">
+                    {keys.map((key) => {
+                        const isBackspace = key === "d";
+                        const isConfirm = key === "v";
+                        const isDisabled = isConfirm && !tableNum;
 
-                {/* Bottone conferma */}
-                <Button
-                    onClick={handleSubmit}
-                    disabled={!tableNum}
-                    className={`
-                        w-full py-6 rounded-2xl text-lg font-bold
-                        transition-all duration-300
-                        ${tableNum
-                            ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-200 translate-y-0 opacity-100"
-                            : "bg-gray-200 text-gray-400 cursor-not-allowed translate-y-1 opacity-60"
-                        }
-                    `}
-                >
-                    {tableNum ? `Conferma tavolo ${tableNum}` : "Seleziona un tavolo"}
-                </Button>
+                        return (
+                            <button
+                                key={key}
+                                onClick={() => handleKey(key)}
+                                disabled={isDisabled}
+                                className={`
+                                    h-16 rounded-2xl text-2xl font-semibold
+                                    flex items-center justify-center
+                                    transition-all duration-150 active:scale-95
+                                    select-none
+                                    ${isConfirm
+                                        ? tableNum
+                                            ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                                            : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                                        : isBackspace
+                                            ? "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                                            : "bg-white border border-gray-200 text-gray-800 hover:bg-gray-50 shadow-sm"
+                                    }
+                                `}
+                            >
+                                {key === "d" ? <Delete /> : key === "v" ? <Check /> : key}
+                            </button>
+                        );
+                    })}
+                </div>
 
             </div>
         </div>

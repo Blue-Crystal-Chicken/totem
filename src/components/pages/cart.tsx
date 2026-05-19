@@ -29,13 +29,18 @@ export default function Cart() {
         dispatch({ type: "SET_TOTAL", payload: { total } });
         navigate("/checkout");
     };
+
+    const handleGoBack = () => {
+        navigate("/home");
+    }
+
     return (
         <div className="flex flex-col h-full min-h-0 bg-white">
             <Navbar
                 title="Blue Crystal"
                 subtitle={`Chicken -${state.table ? ` Tavolo ${state.table}` : 'Takeaway'}`}
                 back={true}
-                onBack={() => navigate(`/menu`)}
+                onBack={handleGoBack}
             />
 
             {state.items.length > 0 ? (
@@ -49,6 +54,7 @@ export default function Cart() {
                                 quantity={item.quantity}
                                 price={item.price}
                                 img={item.imgPath ? getImageUrl(item.imgPath) : ""}
+                                ingredientNames={item.ingredientNames}
                                 onUpdateQuantity={(quantity: number) => handleUpdateQuantity(item.id, quantity)}
                                 onRemove={() => handleRemoveItem(item.id)}
                             />
@@ -100,7 +106,7 @@ export default function Cart() {
                         Aggiungi i tuoi piatti preferiti dal menu per iniziare l'ordine.
                     </p>
                     <Button
-                        onClick={() => navigate("/menu")}
+                        onClick={handleGoBack}
                         className="px-10 py-4 bg-primary text-white font-bold rounded-2xl shadow-lg transition-all active:scale-95 hover:bg-blue-800"
                     >
                         Vai al Menu

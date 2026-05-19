@@ -35,7 +35,7 @@ export default function Checkout() {
                         menuId: item.type === "MENU" ? item.referenceId : null,
                         quantity: item.quantity,
                         specialNote: null,
-                        ingredientIds: null
+                        ingredientIds: item.ingredientIds || null
                     })),
                     paymentType: selectedMethod,
                     serviceType: state.serviceType || "takeway",

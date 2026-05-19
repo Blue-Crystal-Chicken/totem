@@ -5,6 +5,7 @@ export interface OfferProductResponse {
   productName: string;
   quantity: number;
   unitPrice: number;
+  productImagePath: string;
 }
 
 export interface OfferResponse {

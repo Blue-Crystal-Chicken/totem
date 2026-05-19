@@ -10,7 +10,6 @@ export default function OrderSuccess() {
     const navigate = useNavigate();
     const order = location.state?.order as OrderResponse;
     const COUNTDOWN = 5;
-
     const [count, setCount] = useState(COUNTDOWN);
     
       useEffect(() => {

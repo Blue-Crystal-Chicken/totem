@@ -1,6 +1,7 @@
 // context/CartContext.tsx
 import { createContext, useContext, useReducer } from "react";
 import type { CartItemType } from "@/types/cart.types";
+import type { Addition } from "@/types/additions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -13,11 +14,15 @@ export interface CartItem {
     quantity: number;
     imgPath: string | null;
     category?: string;
+    ingredientIds?: number[];
+    ingredientNames?: string[];
+    addition?: Addition[];
+    specialNotes?: string;
 }
 
 export interface CartState {
     items: CartItem[];
-    table?: number;
+    table?: string;
     total?: number;
     serviceType?: "dine-in" | "takeaway";
     paymentType?: "cash" | "card";
@@ -27,7 +32,7 @@ type CartAction =
     | { type: "ADD_ITEM"; payload: CartItem }
     | { type: "REMOVE_ITEM"; payload: { id: string } }
     | { type: "UPDATE_QUANTITY"; payload: { id: string; quantity: number } }
-    | { type: "SET_TABLE"; payload: number }
+    | { type: "SET_TABLE"; payload: string }
     | { type: "SET_MODE"; payload: "dine-in" | "takeaway" }
     | { type: "SET_PAYMENT"; payload: "cash" | "card" }
     | { type: "CLEAR_CART" }
@@ -56,6 +61,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
                             ? { ...i, quantity: i.quantity + action.payload.quantity }
                             : i
                     ),
+                    total: (state.total ?? 0) + action.payload.price * action.payload.quantity ,
                 };
             }
             return { ...state, items: [...state.items, action.payload] };

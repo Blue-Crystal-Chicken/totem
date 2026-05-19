@@ -4,6 +4,7 @@ import type { ProductResponse } from "@/types/product.types";
 import { useCart } from "./context/cart";
 import { Button } from "./ui/button";
 import { useState } from "react";
+import { Check } from "lucide-react";
 
 interface ProductDetailsProps {
     product: ProductResponse;
@@ -38,25 +39,55 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     const visibleNutrition = nutritionAttrs.filter(a => a.show);
 
     const { dispatch } = useCart();
+    const state = useCart().state;
 
     const [quantity, setQuantity] = useState(1);
+    const [price, setPrice] = useState(product.price);
 
     const handleAddToCart = () => {
+        const extraNames = product.ingredients
+            ?.filter(ing => selectedExtras.includes(ing.id))
+            .map(ing => ing.name) || [];
+            
+        // Genera un ID unico basato sul prodotto e gli extra selezionati
+        // Ordiniamo gli ID degli extra per garantire che la stessa combinazione abbia lo stesso ID carrello
+        const sortedExtras = [...selectedExtras].sort((a, b) => a - b);
+        const uniqueId = sortedExtras.length > 0 
+            ? `product-${product.id}-extra-${sortedExtras.join('-')}`
+            : `product-${product.id}`;
+
         dispatch({
             type: "ADD_ITEM",
             payload: {
-                id: `product-${product.id}`,
+                id: uniqueId,
                 type: "PRODUCT",
                 referenceId: product.id,
                 name: product.name,
-                price: product.price,
+                price: price, // Usa il prezzo corrente che include gli extra
                 quantity: quantity,
                 imgPath: product.imgPath ?? null,
                 category: product.category?.name,
+                ingredientIds: sortedExtras,
+                ingredientNames: extraNames,
             }
         });
     };
 
+    const [selectedExtras, setSelectedExtras] = useState<number[]>([]);
+
+    const handleAddExtraIngredient = (ingredient: { id: number; name: string; price: number }) => {
+        const isSelected = selectedExtras.includes(ingredient.id);
+
+        if (isSelected) {
+            // Rimuovi extra
+            setSelectedExtras(prev => prev.filter(id => id !== ingredient.id));
+            setPrice(prev => prev - ingredient.price);
+        } else {
+            // Aggiungi extra
+            setSelectedExtras(prev => [...prev, ingredient.id]);
+            setPrice(prev => prev + ingredient.price);
+        }
+    };
 
     return (
         <div className="flex flex-col h-full min-h-0 bg-white">
@@ -177,17 +208,31 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                 {product.ingredients?.length > 0 && (
                     <section>
                         <h2 className="text-xs font-bold text-[#185FA5] uppercase tracking-widest mb-3">
-                            Ingredienti
+                            Extra Ingredienti
                         </h2>
                         <div className="flex flex-wrap gap-2">
-                            {product.ingredients.map(ing => (
-                                <span
-                                    key={ing.id}
-                                    className="text-xs bg-white border border-[#C8E8FF] text-[#185FA5] rounded-2xl px-4 py-2"
-                                >
-                                    {ing.name}
-                                </span>
-                            ))}
+                            {product.ingredients.map(ing => {
+                                const isSelected = selectedExtras.includes(ing.id);
+                                return (
+                                    <Button
+                                        key={ing.id}
+                                        className={`rounded-2xl border border-[#C8E8FF] transition-all ${
+                                            isSelected
+                                                ? "bg-[#185FA5] text-white hover:bg-[#144c84]"
+                                                : "bg-[#EBF5FF] text-blue-600 hover:bg-blue-800 hover:text-white"
+                                        }`}
+                                        onClick={() => handleAddExtraIngredient(ing)}
+                                    >
+                                        {ing.name} 
+                                        <div className="text-xs font-semibold flex items-center gap-2">
+                                            <span className="inline-block w-2 text-center">
+                                                {isSelected ? <Check /> : "+"}
+                                            </span>
+                                            € {ing.price.toFixed(2)}
+                                        </div>
+                                    </Button>
+                                );
+                            })}
                         </div>
                     </section>
                 )}
@@ -195,23 +240,22 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
             {/* Barra azione fissa in basso */}
             <div className="shrink-0 border-t border-[#C8E8FF] bg-gray-100 backdrop-blur-md px-4 py-4">
-                <div className="flex items-center gap-4">
-                    {/* Pulsante − */}
+
+                <div className="flex flex-col items-center justify-center mt-3 w-full gap-4">
+                    <div className="flex items-center justify-between gap-2 text-xs text-gray-500 w-full">
+                        <div className="flex items-center gap-12">
+                            {/* Pulsante − */}
                     <button
                         onClick={() => setQuantity(q => Math.max(1, q - 1))}
                         className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-[#185FA5] text-3xl font-bold text-white shadow-md transition-all active:scale-90 hover:bg-[#144c84]"
                     >
                         −
                     </button>
-
-                    {/* Bottone Aggiungi al carrello */}
-                    <Button
-                        onClick={handleAddToCart}
-                        className="flex-1 h-16 rounded-2xl bg-[#185FA5] text-xl font-black text-white shadow-lg transition-all active:scale-[0.98] hover:bg-[#144c84]"
-                    >
-                        Aggiungi {quantity} al carrello &nbsp;€ {(product.price * quantity).toFixed(2)}
-                    </Button>
-
+                        <div className="w-20 flex items-center justify-center">
+                            <h1 className="text-6xl font-black text-[#378ADD] tabular-nums">
+                                {quantity}
+                            </h1>
+                        </div>
                     {/* Pulsante + */}
                     <button
                         onClick={() => setQuantity(q => q + 1)}
@@ -219,8 +263,26 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                     >
                         +
                     </button>
+                    </div>
+                        <div className="flex flex-col items-center justify-center gap-1">
+                        <h2 className="text-gray-500 text-xl">
+                            Totale: 
+                        </h2>
+                        <div className="w-64 flex items-center justify-center">
+                        <h1 className="font-bold text-[#185FA5] text-4xl tabular-nums">€ {(price * quantity).toFixed(2)}</h1>
+                        </div>
+                        </div>
                 </div>
+                {/* Bottone Aggiungi al carrello */}
+                    <Button
+                        onClick={handleAddToCart}
+                        className="flex-1 h-18 min-h-18 rounded-2xl bg-[#185FA5] text-xl font-black text-white shadow-lg transition-all active:scale-[0.98] hover:bg-[#144c84] w-full"
+                        disabled={quantity <= 0}
+                    >
+                        Aggiungi al carrello 
+                    </Button>
             </div>
+        </div>
         </div>
     );
 }

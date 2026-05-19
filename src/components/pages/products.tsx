@@ -38,7 +38,7 @@ export default function Products() {
     }, [category_id]);
 
     function handleBack() {
-        navigate('/menu');
+        navigate('/home');
     }
 
     function handleProductClick(productId: number) {
