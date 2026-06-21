@@ -1,6 +1,6 @@
 # BCC Totem - Kiosk Application
 
-Questa è l'applicazione **Totem** (chiosco interattivo per ordini self-service) del progetto **Blue Crystal Kitchen (BCC)**.
+Questa è l'applicazione **Totem** (chiosco interattivo per ordini self-service) del progetto **Blue Crystal Chicken (BCC)**.
 È realizzata con **React**, **TypeScript**, **Vite** e stilizzata tramite **Tailwind CSS** e componenti **shadcn/ui**.
 
 ---
