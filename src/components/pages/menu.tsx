@@ -53,7 +53,7 @@ export default function Menu({ category, offers, menus }: MenuProps) {
                 <div className="flex-1 overflow-y-auto min-h-0 no-scrollbar">
                 <div>
                 <div className="flex  justify-between items-center ">
-                <h1 className="text-xl font-bold">Offerte</h1>
+                <h1 className="text-xl text-black font-bold">Offerte</h1>
                 <Button className="gost" onClick={() => handleClickOffer()}>
                     See all <ArrowRight/>
                 </Button>
@@ -73,7 +73,7 @@ export default function Menu({ category, offers, menus }: MenuProps) {
                 </div>
                 <div>
                 <div className="flex  justify-between items-center ">
-                <h1 className="text-xl font-bold">Menu</h1>
+                <h1 className="text-xl text-black font-bold">Menu</h1>
                 <Button className="gost" onClick={() => handleClickMenu()}>
                     See all <ArrowRight/>
                 </Button>
@@ -92,7 +92,7 @@ export default function Menu({ category, offers, menus }: MenuProps) {
                     </div>
                 </div>
                 <div>
-                <h1 className="text-xl font-bold">Categorie</h1>
+                <h1 className="text-xl text-black font-bold">Categorie</h1>
                     <div className="grid grid-cols-3 gap-4 m-2">
                         {category.map((cat) => (
                             <MyCard
