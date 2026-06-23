@@ -1,37 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Navbar from "../nav";
-import { Button } from "../ui/button";
 import { useCart } from "../context/cart";
 import { Delete, Check } from "lucide-react";
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const LOCATION_ID = import.meta.env.VITE_API_LOCATION_ID;
 
 export default function TableSelection() {
     const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "d", "0", "v"];
     const navigate = useNavigate();
     const { dispatch } = useCart();
     const [tableNum, setTableNum] = useState<string>("");
-    const [tables, setTables] = useState<number>(0);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function fetchTables() {
-            try {
-                const response = await fetch(`${BASE_URL}/api/locations/location/tables/${LOCATION_ID}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setTables(data);
-                }
-            } catch (error) {
-                console.error("Error fetching tables:", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-        fetchTables();
-    }, []);
 
     function handleKey(key: string) {
         if (key === "d") {

@@ -1,6 +1,5 @@
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 import { Button } from "./ui/button";
-import { useCart } from "./context/cart";
 
 
 type NavbarProps ={

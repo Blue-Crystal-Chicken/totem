@@ -3,7 +3,6 @@ import type { OfferResponse } from "@/types/offer.types"
 import { useState } from "react";
 import { useCart } from "./context/cart";
 import { getCategoryEmoji } from "@/constants/category";
-import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import CardOfferProduct from "./cardOfferProduct";
 
@@ -14,11 +13,6 @@ interface CardOfferDetailsProps {
 export default function CardOfferDetails({ offer }: CardOfferDetailsProps) {
     const imageUrl = getImageUrl(offer.imgPath ?? undefined);
     const { dispatch } = useCart();
-    const navigate = useNavigate();
-
-    function handleProductClick(productId: number) {
-        navigate(`/product/${productId}`);
-    }
     
         const [quantity, setQuantity] = useState(1);
     

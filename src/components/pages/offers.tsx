@@ -2,7 +2,6 @@ import type { OfferResponse } from "@/types/offer.types";
 import { useEffect, useState } from "react";
 import CardProducts from "../cardProduct";
 import Navbar from "../nav";
-import products from "./products";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/cart";
 import { Spinner } from "../ui/spinner";

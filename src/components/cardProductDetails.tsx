@@ -39,7 +39,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     const visibleNutrition = nutritionAttrs.filter(a => a.show);
 
     const { dispatch } = useCart();
-    const state = useCart().state;
 
     const [quantity, setQuantity] = useState(1);
     const [price, setPrice] = useState(product.price);
